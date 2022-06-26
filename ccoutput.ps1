@@ -54,7 +54,10 @@ if($reconciledir_present -eq $true)
 
       }
 
-      $data | select -Property Date, 'IN', Out, Merchant, Balance | Sort-Object -Property Date | ft
+      Write-Host "[*] Writing out CSV file"
+      $data_processed = $data | select -Property Date, 'IN', Out, Merchant, Balance | Sort-Object -Property Date | Export-Csv .\Test.csv
+      Write-Host "[*] Sanitising Date Fields"
+      ((Get-Content -path .\Test.csv -Raw) -replace ' 00:00:00','') | Set-Content -Path .\Test.csv
 
     }
 }
