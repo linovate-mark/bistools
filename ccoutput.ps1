@@ -59,5 +59,9 @@ if($reconciledir_present -eq $true)
       Write-Host "[*] Sanitising Date Fields"
       ((Get-Content -path .\Test.csv -Raw) -replace ' 00:00:00','') | Set-Content -Path .\Test.csv
 
+      # FIXME - Add in range select
+      # $incoming_balance = Read-Host -Prompt "[?] Please enter Balance from overlapping (already in accounting system) statement entry [eg. -123.98]):"
+      # $incoming_bal_date = Read-Host -Prompt "[?] Please enter Merchant string from overlapping statement entry:"
+
     }
 }
