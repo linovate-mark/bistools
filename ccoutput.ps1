@@ -36,9 +36,7 @@ if($reconciledir_present -eq $true)
       $data | Foreach-Object {
 
             $dateorig = $_.Date.Replace('-', '/')
-            $dateconv = [Datetime]::ParseExact($dateorig, 'dd/MM/yyyy', $null)
-            $_.Date = [DateTime]$dateconv
-
+            $_.Date = [Datetime]::ParseExact($dateorig, 'dd/MM/yyyy', $null)
       }
 
       Write-Host "[*] Scan for Payment Lines"
