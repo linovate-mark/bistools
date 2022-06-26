@@ -45,8 +45,7 @@ if($reconciledir_present -eq $true)
             $data_merchant = ($_.Merchant.ToString())
             if($data_amount -like "*-*" -and $data_merchant -like "*DIRECT DEBIT*")
             {
-              Write-Host "Creating Payment Line for  $($_.Date)"
-              $_ | ft
+              Write-Host "[i] Creating Payment Line for $($_.Date)"
               $_.IN = $_.Out.Replace('-','')
               $_.Out = ''
               $_.Merchant = 'Business Credit Card Payment'
