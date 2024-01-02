@@ -43,9 +43,19 @@ if($reconciledir_present -eq $true)
       $data | Foreach-Object {
             $data_amount = $($_.Amount.ToString())
             $data_merchant = ($_.Merchant.ToString())
+            if($data_amount -like "*-*" -and $data_merchant -like "*PAYMENT RECEIVED*")
+            {
+              Write-Host "[i] Detected OOB Payment Line for $($_.Date) of $data_amount"
+              # Move value from Out to IN
+              $_.IN = $_.Out.Replace('-','')
+              $_.Out = ''
+              $_.Merchant = 'Business Credit Card Payment'
+            }
+
             if($data_amount -like "*-*" -and $data_merchant -like "*DIRECT DEBIT*")
             {
-              Write-Host "[i] Creating Payment Line for $($_.Date)"
+              Write-Host "[i] Detected DD Payment Line for $($_.Date) of $data_amount"
+              # Move value from Out to IN
               $_.IN = $_.Out.Replace('-','')
               $_.Out = ''
               $_.Merchant = 'Business Credit Card Payment'
