@@ -101,7 +101,7 @@ if($reconciledir_present -eq $true -and $outputdir_present -eq $true)
       }
 
       Write-Host "[*] Writing out CSV file to $outputdir/$outputfilename.csv"
-      $data_processed | Export-Csv "$outputfilepath.csv"
+      $data_processed | Export-Csv -NoTypeInformation "$outputfilepath.csv"
       Write-Host "[*] Sanitising Date Fields on resulting CSV"
       ((Get-Content -path "$outputfilepath.csv" -Raw) -replace ' 00:00:00','') | Set-Content -Path "$outputfilepath.csv"
 
