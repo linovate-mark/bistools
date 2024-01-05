@@ -46,11 +46,10 @@ if($reconciledir_present -eq $true -and $outputdir_present -eq $true)
       # Alias Property of Amount to Out
       $data | Add-Member -MemberType AliasProperty -Name 'Out' -Value 'Amount'
 
-      Write-Host "[*] Casting Date to actual dates"
+      Write-Host "[*] Reformat Dates to slash dates"
       $data | Foreach-Object {
-
             $dateorig = $_.Date.Replace('-', '/')
-            $_.Date = [Datetime]::ParseExact($dateorig, 'dd/MM/yyyy', $null).ToString('yyyy/MM/dd')
+            $_.Date = "$dateorig"
       }
 
       Write-Host "[*] Scan for Payment Lines"
@@ -77,16 +76,22 @@ if($reconciledir_present -eq $true -and $outputdir_present -eq $true)
             }
 
       }
+
       # Sort the object into date order
-      $data_processed = $data | Select-Object -Property Date, 'IN', Out, Merchant, Balance | Sort-Object -Property Date
+      $data_processed = $data | Select-Object -Property @{
+        Name='Date';
+        Expression={
+            [datetime]::ParseExact($($_.Date),'dd/MM/yyyy',$culture)}
+        }, 'IN', Out, Merchant, Balance | Sort-Object -Property Date
+
       # Extract the date range of the first and last object
       $data_processed_range_start = $data_processed | Select-Object -First 1 -Property Date
       $data_processed_range_end = $data_processed | Select-Object -Last 1 -Property Date
       # Flatten the slashes to make date range safe for filenames
-      $date_start = $($data_processed_range_start.Date).Replace('/','')
-      $date_end = $($data_processed_range_end.Date).Replace('/','')
+      $date_start = $($data_processed_range_start.Date).ToString().Replace('/','')
+      $date_end = $($data_processed_range_end.Date).ToString().Replace('/','')
       # Render these to variables to be used during output
-      $outputfilename = "$prefix-$date_start-to-$date_end"
+      $outputfilename = "$prefix-$date_start-to-$date_end".Replace(' 00:00:00','')
       $outputfilepath = "$outputdir/$outputfilename"
 
       if(Test-Path "$outputfilepath.csv" -PathType Leaf)
